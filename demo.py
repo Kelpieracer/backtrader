@@ -8,14 +8,14 @@ import backtrader as bt
 class SmaCross(bt.Strategy):
     # list of parameters which are configurable for the strategy
     params = dict(
-        pfast=12,  # period for the fast moving average
+        pfast=5,  # period for the fast moving average
         pslow=26   # period for the slow moving average
     )
 
     def __init__(self):
-        sma1 = bt.ind.SMA(period=self.p.pfast)  # fast moving average
-        sma2 = bt.ind.SMA(period=self.p.pslow)  # slow moving average
-        self.crossover = bt.ind.CrossOver(sma1, sma2)  # crossover signal
+        ema1 = bt.ind.EMA(period=self.p.pfast)  # fast moving average
+        ema2 = bt.ind.EMA(period=self.p.pslow)  # slow moving average
+        self.crossover = bt.ind.CrossOver(ema1, ema2)  # crossover signal
 
     def next(self):
         if not self.position:  # not in the market
@@ -38,3 +38,4 @@ cerebro.adddata(data)  # Add the data feed
 cerebro.addstrategy(SmaCross)  # Add the trading strategy
 cerebro.run()  # run it all
 cerebro.plot()  # and plot it with a single command
+pass
