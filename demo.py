@@ -27,6 +27,7 @@ class SmaCross(bt.Strategy):
 
 
 cerebro = bt.Cerebro()  # create a "Cerebro" engine instance
+cerebro.broker.setcash(50.0)
 
 # Create a data feed
 data = bt.feeds.YahooFinanceData(dataname='INTC',
