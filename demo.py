@@ -8,7 +8,7 @@ import backtrader as bt
 class SmaCross(bt.Strategy):
     # list of parameters which are configurable for the strategy
     params = dict(
-        pfast=5,  # period for the fast moving average
+        pfast=12,  # period for the fast moving average
         pslow=26   # period for the slow moving average
     )
 
