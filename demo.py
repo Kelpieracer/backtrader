@@ -2,41 +2,46 @@
 from datetime import datetime
 import backtrader as bt
 
-# Create a subclass of Strategy to define the indicators and logic
 
-
-class SmaCross(bt.Strategy):
+class MacdCross(bt.Strategy):
     # list of parameters which are configurable for the strategy
-    params = dict(
-        pfast=12,  # period for the fast moving average
-        pslow=26   # period for the slow moving average
-    )
+    # params = dict(
+    #     psignal=9,  # EMA signal
+    #     pfast=12,   # period for the fast moving average
+    #     pslow=26    # period for the slow moving average
+    # )
 
     def __init__(self):
-        ema1 = bt.ind.EMA(period=self.p.pfast)  # fast moving average
-        ema2 = bt.ind.EMA(period=self.p.pslow)  # slow moving average
-        self.crossover = bt.ind.CrossOver(ema1, ema2)  # crossover signal
+        m = bt.ind.MACD()
+        self.crossover = bt.ind.CrossOver(
+            m.lines.macd, m.lines.signal)         # Proper
+        # self.crossover = bt.ind.CrossOver(m.lines.signal, m.lines.macd)       # Inverse
 
-    def next(self):
+    def next_open(self):
         if not self.position:  # not in the market
             if self.crossover > 0:  # if fast crosses slow to the upside
-                self.buy()  # enter long
+                unit_price = self.datas[0].open
+                cash = self.broker.get_cash()
+                amount_to_buy, _ = divmod(
+                    cash / unit_price, 1)           # All-in
+                self.order = self.buy(size=amount_to_buy)  # enter long,
 
         elif self.crossover < 0:  # in the market & cross to the downside
-            self.close()  # close long position
+            self.order = self.close()  # close long position
 
 
-cerebro = bt.Cerebro()  # create a "Cerebro" engine instance
-cerebro.broker.setcash(50.0)
+# Cheat-on-open is needed in order to go all-in
+cerebro = bt.Cerebro(cheat_on_open=True)
 
 # Create a data feed
 data = bt.feeds.YahooFinanceData(dataname='INTC',
                                  fromdate=datetime(2017, 1, 1),
                                  todate=datetime(2021, 12, 31))
+cerebro.broker.setcash(10000.0)
 
 cerebro.adddata(data)  # Add the data feed
 
-cerebro.addstrategy(SmaCross)  # Add the trading strategy
+cerebro.addstrategy(MacdCross)  # Add the trading strategy
 cerebro.run()  # run it all
 cerebro.plot()  # and plot it with a single command
 pass
