@@ -13,9 +13,10 @@ class MacdCross(bt.Strategy):
 
     def __init__(self):
         m = bt.ind.MACD()
+        # self.crossover = bt.ind.CrossOver(
+        #     m.lines.macd, m.lines.signal)         # Proper
         self.crossover = bt.ind.CrossOver(
-            m.lines.macd, m.lines.signal)         # Proper
-        # self.crossover = bt.ind.CrossOver(m.lines.signal, m.lines.macd)       # Inverse
+            m.lines.signal, m.lines.macd)       # Inverse
 
     def next_open(self):
         if not self.position:  # not in the market
