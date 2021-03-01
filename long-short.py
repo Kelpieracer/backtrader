@@ -19,24 +19,26 @@ class MacdCross(bt.Strategy):
         #     m.lines.signal, m.lines.macd)       # Inverse
 
     def next_open(self):
-        if not self.position:  # not in the market
-            if self.crossover > 0:  # if fast crosses slow to the upside
-                unit_price = self.datas[0].open
-                cash = self.broker.get_cash()
-                amount_to_buy, _ = divmod(
-                    cash / unit_price, 1)           # All-in
-                self.order = self.buy(size=amount_to_buy)  # enter long,
+        # if not self.position:  # not in the market
+        unit_price = self.datas[0].open
+        cash = self.broker.get_cash()
+        amount_to_buy, _ = divmod(
+            cash / unit_price / 2, 1)           # Almost all-in
+        if self.crossover > 0:  # if fast crosses slow to the upside
+            self.order = self.close()  # close long position
+            self.order = self.buy(size=amount_to_buy)  # enter long,
 
         elif self.crossover < 0:  # in the market & cross to the downside
             self.order = self.close()  # close long position
+            self.order = self.sell(size=amount_to_buy)  # enter long,
 
 
 # Cheat-on-open is needed in order to go all-in
 cerebro = bt.Cerebro(cheat_on_open=True)
 
 # Create a data feed
-data = bt.feeds.YahooFinanceData(dataname='FIA1S.HE',
-                                 fromdate=datetime(1980, 1, 1),
+data = bt.feeds.YahooFinanceData(dataname='WRT1V.HE',
+                                 fromdate=datetime(2017, 1, 1),
                                  todate=datetime(2021, 12, 31))
 cerebro.broker.setcash(10000.0)
 
