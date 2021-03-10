@@ -8,9 +8,9 @@ LONG = 'long'
 SHORT = 'short'
 counter = 0
 correct = 0
-days_to_look_back = 5
+days_to_look_back = 5*12
 profit = 0.0
-trend_follow = -1
+trend_follow = 1
 macd = False
 
 

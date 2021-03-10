@@ -35,8 +35,8 @@ class MacdCross(bt.Strategy):
 cerebro = bt.Cerebro(cheat_on_open=True)
 
 # Create a data feed
-data = bt.feeds.YahooFinanceData(dataname='FIA1S.HE',
-                                 fromdate=datetime(1980, 1, 1),
+data = bt.feeds.YahooFinanceData(dataname='GOFORE.HE',
+                                 fromdate=datetime(2017, 1, 1),
                                  todate=datetime(2021, 12, 31))
 cerebro.broker.setcash(10000.0)
 
